@@ -19,10 +19,13 @@ RUN wget https://github.com/tesseract-ocr/tesseract/archive/4.00.00dev.tar.gz &&
 WORKDIR tesseract-4.00.00dev/
 RUN ./autogen.sh && \
     ./configure && \
-    make && \
-    make install
+    LDFLAGS="-L/usr/local/lib" CFLAGS="-I/usr/local/include" make && \
+    make install && \
+    ldconfig
 
 WORKDIR /home
 
 # Cleanup
 RUN rm -rf tesseract/4.00.00dev/
+
+RUN tesseract -v
