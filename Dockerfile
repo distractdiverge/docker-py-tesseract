@@ -12,8 +12,8 @@ RUN apt-get update && apt-get install -y \
     libjpeg62-turbo-dev \
     libtiff5-dev zlib1g-dev \
     libleptonica-dev
-RUN wget https://github.com/tesseract-ocr/tesseract/archive/4.00.00dev.tar.gz &&
-    tar xvf 4.00.00dev.tar.gz &&
+RUN wget https://github.com/tesseract-ocr/tesseract/archive/4.00.00dev.tar.gz && \
+    tar xvf 4.00.00dev.tar.gz && \
     rm -rf 4.00.00dev.tar.gz
 
 WORKDIR tesseract-4.00.00dev/
