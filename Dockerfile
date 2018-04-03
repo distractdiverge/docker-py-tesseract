@@ -1,5 +1,8 @@
 FROM python:3-stretch
 
+LABEL maintainer="contact@alexlapinski.name"
+LABEL version="1.0.0"
+
 # Install Dependencies for tesseract
 RUN apt-get update && apt-get install -y \
     g++ \

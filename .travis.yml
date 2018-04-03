@@ -1,0 +1,24 @@
+sudo: required
+services:
+- docker
+env:
+  global:
+  - IMAGE_NAME=alexlapinski/python-tesseract
+  - REGISTRY_USER=alexlapinski
+  - secure: oOOLk2DNdU6nS3P6YGaGu+IMVzfPypSmQDjBJJjsMJGJIX+D5AuNVE9Y3RlQyj/5IFP01lMac7Od6a4NggHWoOudDVS7xFqIfrjyFU7T0ruzfJ00Gd88VH29k3urqFfGInAgrpoyqYKzAkzLhIK/oBpfLn7IAN6eO2H7YVuFturFDglzvXzOv0+6hueDSbfJrluOqKi9qEHLs3gsW2jaQsv8ILNcDimF0XYalShvWvotmBp9WH1u+I4jydYOZiWQr+F+up9teir1nTqHJxAKlNtIY0GPDDSS0/OdDyyrjDjtggl5OqiNFXPl6iTqH6tEhtE71fSbpaz7TiOd0sBYaM3toJlmercvMi3hilfRj/6c0ZkJgIm7S83INrNz/4Hkrh5H2+4QP3GhV5VvvM4Ueuu49U5Us6q/bURzt80NE4mTFJxif/pVRXnnYHnBby+gT+CO926EcVtm4TD+OYZBcj9df8WaCj1ChkQDmXwqcF0FNSZeuW05YyVGbDv5MKIUziINHMXw7ylY8/SYNj5OUhAj1PnN8rxXK6SRGv4PXWmiadBWqPmULimFQWTVLJQ/OlZecf838rSrmKMH3ZVrgkwOXvzha2tsU1+ybXLl8T29k0ENnS0t4fSaZMh/Qz0CMooSPyN8UFm4XM9fG6s5btiRjGsDnkxzStvgoLDYdTI=
+before_script:
+- version="$(awk '/LABEL version="(.*)"/ { print $2; }' Dockerfile | sed 's/version="\([^"]*\)"/\1/')"
+- docker pull "$IMAGE_NAME" || true
+script:
+- docker build --pull --cache-from "$IMAGE_NAME" --tag "$IMAGE_NAME" .
+after_script:
+- docker images
+before_deploy:
+- docker login -u "$REGISTRY_USER" -p "$REGISTRY_PASS"
+- docker tag "$IMAGE_NAME" "${IMAGE_NAME}:latest"
+- docker tag "$IMAGE_NAME" "${IMAGE_NAME}:${version}"
+deploy:
+  provider: script
+  script: docker push "${IMAGE_NAME}:latest" && docker push "${IMAGE_NAME}:${version}"
+  on:
+    branch: master
